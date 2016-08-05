@@ -48,7 +48,7 @@ public class TodoController {
 
     @RequestMapping(value = "/{login}/todos/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Resource<Todo> todo(@PathVariable String login, @PathVariable Long id) {
+    public Resource<Todo> readTodo(@PathVariable String login, @PathVariable Long id) {
         return todoResourceAssembler.toResource(todoRepository.findOne(id));
     }
 
