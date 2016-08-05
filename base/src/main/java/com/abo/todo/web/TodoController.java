@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Created by joanna on 04.08.16.
  */
-@RequestMapping("/users")
+@RequestMapping("/users/{login}/todos")
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class TodoController {
@@ -38,7 +38,7 @@ public class TodoController {
     private @NonNull
     LoggedUserGetter loggedUserGetter;
 
-    @RequestMapping(value = "/{login}/todos",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List todos(@PathVariable String login) {
         return todoRepository.findAll().stream()
                 .filter(a -> a.getUser().getLogin().equals(login))
@@ -46,13 +46,13 @@ public class TodoController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/{login}/todos/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Resource<Todo> readTodo(@PathVariable String login, @PathVariable Long id) {
         return todoResourceAssembler.toResource(todoRepository.findOne(id));
     }
 
-    @RequestMapping(value = "/{login}/todos/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Todo> deleteTodo(@PathVariable String login, @PathVariable Long id) {
         if(todoRepository.exists(id)) {
             Todo todo = todoRepository.findOne(id);
@@ -62,12 +62,12 @@ public class TodoController {
         return new ResponseEntity<Todo>(HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(value = "/{login}/todos", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/", method = RequestMethod.DELETE)
     public void deleteTodos(@PathVariable String login) {
         todoRepository.findByUserLogin(login).forEach(todo -> todoRepository.delete(todo));
     }
 
-    @RequestMapping(value = "/{login}/todos", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Resource<Todo> createTodo(@PathVariable String login, @RequestBody Todo todo) {
         User user = loggedUserGetter.getLoggedUser();
@@ -76,7 +76,7 @@ public class TodoController {
         return todoResourceAssembler.toResource(todo);
     }
 
-    @RequestMapping(value = "/{login}/todos/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody Todo newTodo) {
         User user = loggedUserGetter.getLoggedUser();
         Optional<Todo> todo = Optional.ofNullable(todoRepository.findOne(id));

@@ -22,7 +22,7 @@ public class TodoResourceAssembler extends ResourceAssemblerSupport<Todo, Resour
     public Resource toResource(Todo todo) {
         String login = todo.getUser().getLogin();
         return new Resource(todo,
-                linkTo(TodoController.class).slash(login+"/todos/"+ todo.getId()).withSelfRel(),
-                linkTo(UserController.class).slash(login).withRel("owner"));
+                linkTo(TodoController.class, login).slash(login+"/todos/"+ todo.getId()).withSelfRel(),
+                linkTo(UserController.class, login).slash(login).withRel("owner"));
     }
 }
